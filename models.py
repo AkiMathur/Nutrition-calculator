@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column,Integer,String,Date
+from sqlalchemy import Boolean, Column,Integer,String,Date,ForeignKey
 from database import Base
 
 class Meals(Base):
@@ -12,3 +12,16 @@ class Meals(Base):
     proteins = Column(Integer,default=0,nullable=False)
     fats = Column(Integer,default=0,nullable=False)
     meal_details = Column(String,nullable=False)
+
+class Favorites(Base):
+    __tablename__ = "favorites"
+
+    id = Column(Integer,primary_key=True,index=True)
+    calories = Column(Integer,default=0,nullable=False)
+    carbohydrates = Column(Integer,default=0,nullable=False)
+    proteins = Column(Integer,default=0,nullable=False)
+    fats = Column(Integer,default=0,nullable=False)
+    meal_details = Column(String,nullable=False)
+    
+#alembic revision --autogenerate -m "new table"
+#alembic upgrade head
