@@ -24,7 +24,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 def calculate_nutri(meal: str) -> dict:
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
     response = client.models.generate_content(
-        model="gemini-2.5-flash-lite",
+        model="gemini-1.5-flash",
         contents=f'Give me the nutritional values of: {meal}. Reply ONLY in pure JSON, no markdown, no extra text: {{"calories": 0, "carbohydrates": 0, "proteins": 0, "fats": 0}}'
     )
     text = response.text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
