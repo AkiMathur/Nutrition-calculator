@@ -11,8 +11,8 @@ gentest.py
 # Environment — NEVER commit real secrets
 .env
 
-# Database migrations (local only)
-alembic/
+# Database migrations - keep tracked so Render can run migrations
+# alembic/
 
 # IDE
 .vscode/
