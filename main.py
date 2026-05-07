@@ -19,7 +19,6 @@ app = FastAPI()
 # models.Base.metadata.create_all(bind=engine) # Using Alembic for migrations, so this line is commented out
 
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
-app.mount("/app", StaticFiles(directory="static", html=True), name="static")
 
 
 def calculate_nutri(meal: str) -> dict:
@@ -61,9 +60,9 @@ class FavMeal(BaseModel):
     meal_details: str
 
 
-@app.get("/")
-async def root():
-    return {"message": "Welcome to the Nutri Calc"}
+# @app.get("/")
+# async def root():
+#     return {"message": "Welcome to the Nutri Calc"}
 
 #----------------CREATE------------------
 
@@ -224,3 +223,6 @@ async def delete_fav(fav_id: int, db: db_dependency):
     db.delete(db_fav)
     db.commit()
     return {"message": "Favorite deleted successfully"}
+
+
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
