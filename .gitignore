@@ -1,2 +1,23 @@
-.venv
-alembic
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Testing / scratch files
+gentest.py
+
+# Environment — NEVER commit real secrets
+.env
+
+# Database migrations - keep tracked so Render can run migrations
+# alembic/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
