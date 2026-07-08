@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>NutriCalc — Sign In</title>
+  <meta name="description" content="Sign in or create an account to track your nutrition with NutriCalc." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+  <div class="auth-body">
+
+    <div class="auth-logo">🥗</div>
+    <h1 class="auth-title">NutriCalc</h1>
+    <p class="auth-sub">Your AI-powered nutrition tracker</p>
+
+    <div class="auth-card">
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Create Account</button>
+      </div>
+
+      <!-- ── LOGIN PANEL ── -->
+      <div class="auth-panel active" id="panel-login">
+        <div class="auth-error" id="login-error"></div>
+
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <input
+            type="text"
+            id="login-username"
+            placeholder="Enter your username"
+            autocomplete="username"
+            onkeydown="if(event.key==='Enter')document.getElementById('login-password').focus()"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="input-wrap">
+            <input
+              type="password"
+              id="login-password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              onkeydown="if(event.key==='Enter')doLogin()"
+            />
+            <span class="input-icon" id="toggle-login-pw" onclick="togglePw('login-password','toggle-login-pw')">👁</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="btn-login" onclick="doLogin()">Sign In</button>
+      </div>
+
+      <!-- ── REGISTER PANEL ── -->
+      <div class="auth-panel" id="panel-register">
+        <div class="auth-error" id="register-error"></div>
+
+        <div class="form-group">
+          <label for="reg-username">Username</label>
+          <input
+            type="text"
+            id="reg-username"
+            placeholder="Choose a username"
+            autocomplete="username"
+            onkeydown="if(event.key==='Enter')document.getElementById('reg-password').focus()"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="reg-password">Password</label>
+          <div class="input-wrap">
+            <input
+              type="password"
+              id="reg-password"
+              placeholder="Choose a password"
+              autocomplete="new-password"
+              onkeydown="if(event.key==='Enter')document.getElementById('reg-confirm').focus()"
+            />
+            <span class="input-icon" id="toggle-reg-pw" onclick="togglePw('reg-password','toggle-reg-pw')">👁</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-confirm">Confirm Password</label>
+          <div class="input-wrap">
+            <input
+              type="password"
+              id="reg-confirm"
+              placeholder="Re-enter your password"
+              autocomplete="new-password"
+              onkeydown="if(event.key==='Enter')doRegister()"
+            />
+            <span class="input-icon" id="toggle-reg-cf" onclick="togglePw('reg-confirm','toggle-reg-cf')">👁</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-calories">Daily Calorie Goal <span style="color:var(--muted);font-weight:400">(optional, default 2000)</span></label>
+          <input
+            type="number"
+            id="reg-calories"
+            placeholder="e.g. 2000"
+            value="2000"
+            min="500"
+            max="9999"
+            onkeydown="if(event.key==='Enter')doRegister()"
+          />
+        </div>
+
+        <button class="btn btn-primary" id="btn-register" onclick="doRegister()">Create Account</button>
+      </div>
+
+    </div><!-- /.auth-card -->
+
+    <p style="font-size:12px;color:var(--muted);text-align:center">
+      By continuing you agree to track your macros responsibly 🥦
+    </p>
+
+  </div><!-- /.auth-body -->
+
+  <script>
+    const API = '';
+
+    // ── If already logged in, skip to app ──
+    if (localStorage.getItem('nc_token')) {
+      window.location.replace('/');
+    }
+
+    // ── Tab switching ──
+    function switchTab(tab) {
+      ['login', 'register'].forEach(t => {
+        document.getElementById('panel-' + t).classList.toggle('active', t === tab);
+        document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      });
+      clearErrors();
+    }
+
+    function clearErrors() {
+      document.getElementById('login-error').classList.remove('show');
+      document.getElementById('register-error').classList.remove('show');
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+
+    function setLoading(btnId, loading) {
+      const btn = document.getElementById(btnId);
+      if (loading) {
+        btn.dataset.orig = btn.textContent;
+        btn.innerHTML = '<span class="spinner"></span> Please wait…';
+        btn.classList.add('btn-loading');
+      } else {
+        btn.innerHTML = btn.dataset.orig;
+        btn.classList.remove('btn-loading');
+      }
+    }
+
+    function togglePw(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon  = document.getElementById(iconId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        icon.textContent = '👁';
+      }
+    }
+
+    // ── Login ──
+    async function doLogin() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      if (!username || !password) {
+        showError('login-error', 'Please fill in all fields.');
+        return;
+      }
+
+      setLoading('btn-login', true);
+
+      // FastAPI's OAuth2PasswordRequestForm expects application/x-www-form-urlencoded
+      const form = new URLSearchParams();
+      form.append('username', username);
+      form.append('password', password);
+
+      try {
+        const res = await fetch(`${API}/auth/token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: form.toString()
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem('nc_token', data.access_token);
+          localStorage.setItem('nc_refresh_token', data.refresh_token);
+          localStorage.setItem('nc_username', username);
+          window.location.replace('/');
+
+        } else {
+          const err = await res.json().catch(() => ({}));
+          showError('login-error', err.detail || 'Invalid username or password.');
+        }
+      } catch (e) {
+        showError('login-error', 'Could not reach the server. Try again.');
+      }
+
+      setLoading('btn-login', false);
+    }
+
+    // ── Register ──
+    async function doRegister() {
+      const username = document.getElementById('reg-username').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const confirm  = document.getElementById('reg-confirm').value;
+
+      if (!username || !password || !confirm) {
+        showError('register-error', 'Please fill in all fields.');
+        return;
+      }
+      if (password !== confirm) {
+        showError('register-error', 'Passwords do not match.');
+        return;
+      }
+      if (password.length < 6) {
+        showError('register-error', 'Password must be at least 6 characters.');
+        return;
+      }
+
+      setLoading('btn-register', true);
+
+      try {
+        const res = await fetch(`${API}/auth/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, target_calorie: parseInt(document.getElementById('reg-calories').value) || 2000 })
+        });
+
+        if (res.ok) {
+          // Auto-login after successful registration
+          document.getElementById('login-username').value = username;
+          document.getElementById('login-password').value = password;
+          switchTab('login');
+          showError('login-error', ''); // clear
+          document.getElementById('login-error').classList.remove('show');
+          // Show a small success hint
+          const hint = document.createElement('p');
+          hint.textContent = '✅ Account created! Signing you in…';
+          hint.style.cssText = 'color:var(--green);font-size:13px;text-align:center;margin-bottom:12px';
+          document.getElementById('panel-login').prepend(hint);
+          setTimeout(() => doLogin(), 800);
+        } else {
+          const err = await res.json().catch(() => ({}));
+          showError('register-error', err.detail || 'Registration failed. Username may already exist.');
+        }
+      } catch (e) {
+        showError('register-error', 'Could not reach the server. Try again.');
+      }
+
+      setLoading('btn-register', false);
+    }
+  </script>
+
+</body>
+</html>

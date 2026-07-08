@@ -6,576 +6,41 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>NutriCalc</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #0f0f14;
-      color: #e2e8f0;
-      min-height: 100vh;
-      max-width: 430px;
-      margin: 0 auto;
-      position: relative
-    }
-
-    :root {
-      --green: #4ade80;
-      --green-dim: #22c55e;
-      --bg: #0f0f14;
-      --card: #1a1a26;
-      --card2: #22223a;
-      --border: #2a2a40;
-      --muted: #6b7280;
-      --red: #f87171;
-      --yellow: #fbbf24;
-      --blue: #60a5fa
-    }
-
-    .page {
-      display: none;
-      padding: 20px 16px 90px;
-      animation: fadeIn .3s ease
-    }
-
-    .page.active {
-      display: block
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(8px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
-    nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 430px;
-      background: #1a1a26;
-      border-top: 1px solid var(--border);
-      display: flex;
-      z-index: 100
-    }
-
-    .nav-btn {
-      flex: 1;
-      padding: 12px 0 8px;
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      font-size: 11px;
-      font-family: 'Inter', sans-serif;
-      transition: .2s
-    }
-
-    .nav-btn.active {
-      color: var(--green)
-    }
-
-    .nav-btn svg {
-      width: 22px;
-      height: 22px
-    }
-
-    h1 {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 4px
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 20px
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 14px;
-      border: 1px solid var(--border)
-    }
-
-    .card-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      margin-bottom: 12px
-    }
-
-    /* Calorie Ring */
-    .ring-wrap {
-      display: flex;
-      align-items: center;
-      gap: 20px
-    }
-
-    .ring-svg {
-      transform: rotate(-90deg)
-    }
-
-    .ring-center {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center
-    }
-
-    .ring-box {
-      position: relative;
-      width: 110px;
-      height: 110px;
-      flex-shrink: 0
-    }
-
-    .ring-label {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--green)
-    }
-
-    .ring-sub {
-      font-size: 11px;
-      color: var(--muted)
-    }
-
-    .macro-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      flex: 1
-    }
-
-    .macro-item {
-      text-align: center
-    }
-
-    .macro-val {
-      font-size: 18px;
-      font-weight: 700
-    }
-
-    .macro-name {
-      font-size: 11px;
-      color: var(--muted)
-    }
-
-    .macro-bar {
-      height: 4px;
-      border-radius: 2px;
-      margin-top: 4px;
-      transition: .6s
-    }
-
-    /* Meal Cards */
-    .meal-card {
-      background: var(--card2);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center
-    }
-
-    .meal-info .meal-name {
-      font-weight: 600;
-      font-size: 15px;
-      margin-bottom: 2px
-    }
-
-    .meal-info .meal-type {
-      font-size: 12px;
-      color: var(--green);
-      font-weight: 500
-    }
-
-    .meal-stats {
-      text-align: right;
-      font-size: 12px;
-      color: var(--muted)
-    }
-
-    .meal-stats strong {
-      display: block;
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      background: rgba(74, 222, 128, .15);
-      color: var(--green)
-    }
-
-    /* Buttons */
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      font-family: 'Inter', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: .2s
-    }
-
-    .btn-primary {
-      background: var(--green);
-      color: #0f0f14
-    }
-
-    .btn-primary:hover {
-      background: var(--green-dim)
-    }
-
-    .btn-danger {
-      background: rgba(248, 113, 113, .15);
-      color: var(--red);
-      border: 1px solid rgba(248, 113, 113, .3)
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--green);
-      border: 1px solid var(--green)
-    }
-
-    /* Form */
-    .form-group {
-      margin-bottom: 14px
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--muted);
-      margin-bottom: 6px
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 12px 14px;
-      background: var(--card2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: #e2e8f0;
-      font-family: 'Inter', sans-serif;
-      font-size: 15px;
-      outline: none;
-      transition: .2s
-    }
-
-    input:focus,
-    select:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(74, 222, 128, .1)
-    }
-
-    select option {
-      background: #1a1a26
-    }
-
-    .row2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px
-    }
-
-    /* Date nav */
-    .date-nav {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 18px
-    }
-
-    .date-nav input {
-      flex: 1
-    }
-
-    .date-arrow {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: #fff;
-      border-radius: 10px;
-      padding: 11px 14px;
-      cursor: pointer;
-      font-size: 18px
-    }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 90px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1a1a26;
-      border: 1px solid var(--border);
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 500;
-      z-index: 999;
-      opacity: 0;
-      transition: .3s;
-      pointer-events: none;
-      white-space: nowrap
-    }
-
-    .toast.show {
-      opacity: 1
-    }
-
-    .toast.success {
-      border-color: var(--green);
-      color: var(--green)
-    }
-
-    .toast.error {
-      border-color: var(--red);
-      color: var(--red)
-    }
-
-    /* Fav card actions */
-    .fav-card {
-      background: var(--card2);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border)
-    }
-
-    .fav-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 8px
-    }
-
-    .fav-stats {
-      display: flex;
-      gap: 12px;
-      font-size: 12px;
-      color: var(--muted)
-    }
-
-    .fav-stats span strong {
-      color: #fff;
-      font-weight: 600
-    }
-
-    .del-btn {
-      background: none;
-      border: none;
-      color: var(--red);
-      cursor: pointer;
-      font-size: 18px;
-      padding: 2px 6px
-    }
-
-    /* Loading */
-    .loading {
-      text-align: center;
-      color: var(--muted);
-      padding: 40px 0;
-      font-size: 14px
-    }
-
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 40px 0;
-      font-size: 14px
-    }
-
-    .meal-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px
-    }
-
-    .meal-actions button {
-      flex: 1;
-      padding: 8px;
-      border-radius: 8px;
-      border: none;
-      font-size: 12px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 600;
-      cursor: pointer
-    }
-
-    .btn-fav {
-      background: rgba(251, 191, 36, .15);
-      color: var(--yellow)
-    }
-
-    .btn-del {
-      background: rgba(248, 113, 113, .15);
-      color: var(--red)
-    }
-
-    .btn-edit {
-      background: rgba(96, 165, 250, .15);
-      color: var(--blue)
-    }
-
-    /* Fav picker item */
-    .fav-pick-item {
-      background: var(--card2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: .2s;
-      display: flex;
-      justify-content: space-between;
-      align-items: center
-    }
-
-    .fav-pick-item:active {
-      background: #2a2a40;
-      transform: scale(.98)
-    }
-
-    .fav-pick-item .pick-name {
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 4px
-    }
-
-    .fav-pick-item .pick-macros {
-      font-size: 12px;
-      color: var(--muted)
-    }
-
-    /* Edit Modal */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .6);
-      z-index: 200;
-      backdrop-filter: blur(4px);
-      align-items: flex-end;
-      justify-content: center
-    }
-
-    .modal-overlay.open {
-      display: flex
-    }
-
-    .modal {
-      background: #1a1a26;
-      border-radius: 24px 24px 0 0;
-      padding: 24px 20px 32px;
-      width: 100%;
-      max-width: 430px;
-      border-top: 1px solid var(--border);
-      animation: slideUp .3s ease
-    }
-
-    @keyframes slideUp {
-      from {
-        transform: translateY(100%)
-      }
-
-      to {
-        transform: translateY(0)
-      }
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px
-    }
-
-    .modal-header h2 {
-      font-size: 18px;
-      font-weight: 700
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 24px;
-      cursor: pointer;
-      line-height: 1
-    }
-
-    /* Custom confirm */
-    .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center;padding:20px}
-    .confirm-overlay.open{display:flex}
-    .confirm-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 24px;width:100%;max-width:340px;text-align:center;animation:fadeIn .2s ease}
-    .confirm-box h3{font-size:17px;font-weight:700;margin-bottom:8px}
-    .confirm-box p{font-size:14px;color:var(--muted);margin-bottom:22px}
-    .confirm-btns{display:flex;gap:10px}
-    .confirm-btns button{flex:1;padding:13px;border-radius:12px;border:none;font-family:'Inter',sans-serif;font-weight:600;font-size:14px;cursor:pointer}
-    .confirm-yes{background:var(--red);color:#fff}
-    .confirm-no{background:var(--card2);color:#e2e8f0}
-
-    /* Analyse / phase */
-    .btn-analyse{background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff}
-    .btn-analyse:hover{opacity:.9}
-    .btn-analyse:disabled{opacity:.5;cursor:not-allowed}
-    .phase2{display:none}
-    .phase2.visible{display:block;animation:fadeIn .3s ease}
-    .nutri-result{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-    .nutri-box{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
-    .nutri-box label{font-size:11px;color:var(--muted);margin-bottom:6px}
-    .nutri-box input{background:transparent;border:none;text-align:center;font-size:22px;font-weight:700;padding:0;width:100%;color:#fff}
-    .nutri-box input:focus{border:none;box-shadow:none;outline:none}
-    .dual-btn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .btn-log{background:rgba(74,222,128,.15);color:var(--green)}
-  </style>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 
 <body>
-
   <!-- TODAY -->
   <div id="pg-today" class="page active">
-    <h1>Good day! 👋</h1>
+    <div class="user-chip">
+      <span>&#x1F464; Logged in as <strong id="chip-username"></strong></span>
+      <div style="display:flex;gap:6px">
+        <button class="logout-btn" style="background:var(--card2);color:var(--muted)" onclick="document.getElementById('change-pw-modal').classList.add('open')" title="Change password">&#x2699;&#xFE0F; Settings</button>
+        <button class="logout-btn" onclick="doLogout()">Logout</button>
+      </div>
+    </div>
+    <h1>Good day! &#x1F44B;</h1>
     <p class="subtitle" id="today-date-label"></p>
     <div class="card" id="summary-card">
-      <div class="card-title">Today's Summary</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="card-title" style="margin-bottom:0">Today's Summary</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+          <!-- view mode -->
+          <span id="goal-view" style="display:flex;align-items:center;gap:6px">
+            Goal: <strong id="goal-display" style="color:var(--green)">2000</strong> kcal
+            <button onclick="openGoalEdit()" style="background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:2px 4px" title="Edit goal">&#x270F;&#xFE0F;</button>
+          </span>
+          <!-- edit mode (hidden by default) -->
+          <span id="goal-edit" style="display:none;align-items:center;gap:4px">
+            <input type="number" id="goal-input" min="500" max="9999"
+              style="width:66px;font-size:12px;padding:2px 6px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:#fff;text-align:center"
+              onkeydown="if(event.key==='Enter')saveGoalEdit();if(event.key==='Escape')closeGoalEdit()" />
+            <span style="color:var(--muted)">kcal</span>
+            <button onclick="saveGoalEdit()" style="background:var(--green);color:#000;border:none;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;cursor:pointer">Save</button>
+            <button onclick="closeGoalEdit()" style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;line-height:1">&#x2715;</button>
+          </span>
+        </div>
+      </div>
       <div class="ring-wrap">
         <div class="ring-box">
           <svg class="ring-svg" width="110" height="110" viewBox="0 0 110 110">
@@ -620,9 +85,9 @@
     <h1>Meal Log</h1>
     <p class="subtitle">Browse your meals by date</p>
     <div class="date-nav">
-      <button class="date-arrow" onclick="shiftDate(-1)">‹</button>
+      <button class="date-arrow" onclick="shiftDate(-1)">&#8249;</button>
       <input type="date" id="log-date" onchange="loadLog()" />
-      <button class="date-arrow" onclick="shiftDate(1)">›</button>
+      <button class="date-arrow" onclick="shiftDate(1)">&#8250;</button>
     </div>
     <div id="log-list">
       <div class="loading">Select a date above</div>
@@ -633,7 +98,7 @@
   <div id="pg-add" class="page">
     <h1>Log a Meal</h1>
     <p class="subtitle">Track what you eat</p>
-    <button class="btn btn-outline" style="margin-bottom:14px" onclick="openFavPicker()">⭐ Fill from Favorites</button>
+    <button class="btn btn-outline" style="margin-bottom:14px" onclick="openFavPicker()">&#x2B50; Fill from Favorites</button>
     <div class="card">
       <!-- Phase 1 -->
       <div id="add-p1">
@@ -648,7 +113,7 @@
           </select>
         </div>
         <div class="form-group"><label>Meal Details</label><input type="text" id="f-details" placeholder="e.g. 2 boiled eggs and toast"/></div>
-        <button class="btn btn-analyse" id="btn-analyse-meal" onclick="analyseMeal()">✨ Analyse Meal</button>
+        <button class="btn btn-analyse" id="btn-analyse-meal" onclick="analyseMeal()">&#x2728; Analyse Meal</button>
       </div>
       <!-- Phase 2 -->
       <div id="add-p2" class="phase2">
@@ -664,14 +129,14 @@
         </div>
         <div class="form-group"><label>Meal Details</label><input type="text" id="f-details2" placeholder="e.g. 2 boiled eggs and toast"/></div>
         <div class="nutri-result">
-          <div class="nutri-box"><label>🔥 Calories</label><input type="number" id="f-cal"/></div>
-          <div class="nutri-box"><label>🌾 Carbs (g)</label><input type="number" id="f-carb"/></div>
-          <div class="nutri-box"><label>💪 Protein (g)</label><input type="number" id="f-prot"/></div>
-          <div class="nutri-box"><label>🧈 Fat (g)</label><input type="number" id="f-fat"/></div>
+          <div class="nutri-box"><label>&#x1F525; Calories</label><input type="number" id="f-cal"/></div>
+          <div class="nutri-box"><label>&#x1F33E; Carbs (g)</label><input type="number" id="f-carb"/></div>
+          <div class="nutri-box"><label>&#x1F4AA; Protein (g)</label><input type="number" id="f-prot"/></div>
+          <div class="nutri-box"><label>&#x1F9C8; Fat (g)</label><input type="number" id="f-fat"/></div>
         </div>
         <div class="dual-btn">
-          <button class="btn btn-analyse" onclick="analyseMeal()">✨ Re-Analyse</button>
-          <button class="btn btn-primary" onclick="submitMeal()">Log Meal ✓</button>
+          <button class="btn btn-analyse" onclick="analyseMeal()">&#x2728; Re-Analyse</button>
+          <button class="btn btn-primary" onclick="submitMeal()">Log Meal &#x2713;</button>
         </div>
       </div>
     </div>
@@ -680,9 +145,8 @@
   <!-- FAVORITES -->
   <div id="pg-fav" class="page">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-      <h1>Favorites ⭐</h1>
-      <button class="btn btn-outline" style="width:auto;padding:8px 14px;font-size:13px" onclick="openAddFav()">+
-        Add</button>
+      <h1>Favorites &#x2B50;</h1>
+      <button class="btn btn-outline" style="width:auto;padding:8px 14px;font-size:13px" onclick="openAddFav()">+ Add</button>
     </div>
     <p class="subtitle">Your saved meals</p>
     <div id="fav-list">
@@ -694,26 +158,26 @@
   <div class="modal-overlay" id="add-fav-modal" onclick="closeAddFav(event)">
     <div class="modal">
       <div class="modal-header">
-        <h2>New Favorite ⭐</h2>
-        <button class="modal-close" onclick="document.getElementById('add-fav-modal').classList.remove('open')">✕</button>
+        <h2>New Favorite &#x2B50;</h2>
+        <button class="modal-close" onclick="document.getElementById('add-fav-modal').classList.remove('open')">&#x2715;</button>
       </div>
       <!-- AF Phase 1 -->
       <div id="af-p1">
         <div class="form-group"><label>Meal Details</label><input type="text" id="af-details" placeholder="e.g. Boiled eggs"/></div>
-        <button class="btn btn-analyse" onclick="analyseFav()">✨ Analyse</button>
+        <button class="btn btn-analyse" onclick="analyseFav()">&#x2728; Analyse</button>
       </div>
       <!-- AF Phase 2 -->
       <div id="af-p2" class="phase2">
         <div class="form-group"><label>Meal</label><input type="text" id="af-details2" placeholder="e.g. Boiled eggs"/></div>
         <div class="nutri-result">
-          <div class="nutri-box"><label>🔥 Calories</label><input type="number" id="af-cal"/></div>
-          <div class="nutri-box"><label>🌾 Carbs (g)</label><input type="number" id="af-carb"/></div>
-          <div class="nutri-box"><label>💪 Protein (g)</label><input type="number" id="af-prot"/></div>
-          <div class="nutri-box"><label>🧈 Fat (g)</label><input type="number" id="af-fat"/></div>
+          <div class="nutri-box"><label>&#x1F525; Calories</label><input type="number" id="af-cal"/></div>
+          <div class="nutri-box"><label>&#x1F33E; Carbs (g)</label><input type="number" id="af-carb"/></div>
+          <div class="nutri-box"><label>&#x1F4AA; Protein (g)</label><input type="number" id="af-prot"/></div>
+          <div class="nutri-box"><label>&#x1F9C8; Fat (g)</label><input type="number" id="af-fat"/></div>
         </div>
         <div class="dual-btn" style="margin-top:4px">
-          <button class="btn btn-analyse" onclick="analyseFav()">✨ Re-Analyse</button>
-          <button class="btn btn-primary" onclick="submitAddFav()">Save ⭐</button>
+          <button class="btn btn-analyse" onclick="analyseFav()">&#x2728; Re-Analyse</button>
+          <button class="btn btn-primary" onclick="submitAddFav()">Save &#x2B50;</button>
         </div>
       </div>
     </div>
@@ -723,8 +187,8 @@
   <div class="modal-overlay" id="fav-picker" onclick="closeFavPicker(event)">
     <div class="modal">
       <div class="modal-header">
-        <h2>Pick a Favorite ⭐</h2>
-        <button class="modal-close" onclick="document.getElementById('fav-picker').classList.remove('open')">✕</button>
+        <h2>Pick a Favorite &#x2B50;</h2>
+        <button class="modal-close" onclick="document.getElementById('fav-picker').classList.remove('open')">&#x2715;</button>
       </div>
       <div id="fav-picker-list">
         <div class="loading">Loading...</div>
@@ -736,8 +200,8 @@
   <div class="modal-overlay" id="edit-modal" onclick="closeEdit(event)">
     <div class="modal">
       <div class="modal-header">
-        <h2>Edit Meal ✏️</h2>
-        <button class="modal-close" onclick="closeEditBtn()">✕</button>
+        <h2>Edit Meal &#x270F;&#xFE0F;</h2>
+        <button class="modal-close" onclick="closeEditBtn()">&#x2715;</button>
       </div>
       <input type="hidden" id="e-id" />
       <div class="form-group"><label>Date</label><input type="date" id="e-date" /></div>
@@ -751,16 +215,17 @@
         </select>
       </div>
       <div class="form-group"><label>Meal Details</label><input type="text" id="e-details" /></div>
-      <button class="btn btn-analyse" id="btn-analyse-edit" onclick="analyseEdit()" style="margin-bottom:14px">✨ Analyse</button>
+      <button class="btn btn-analyse" id="btn-analyse-edit" onclick="analyseEdit()" style="margin-bottom:14px">&#x2728; Analyse</button>
       <div class="form-group"><label>Calories (kcal)</label><input type="number" id="e-cal" /></div>
       <div class="row2">
         <div class="form-group"><label>Carbs (g)</label><input type="number" id="e-carb" /></div>
         <div class="form-group"><label>Protein (g)</label><input type="number" id="e-prot" /></div>
       </div>
       <div class="form-group"><label>Fat (g)</label><input type="number" id="e-fat" /></div>
-      <button class="btn btn-primary" onclick="saveEdit()">Save Changes ✓</button>
+      <button class="btn btn-primary" onclick="saveEdit()">Save Changes &#x2713;</button>
     </div>
   </div>
+
   <!-- CUSTOM CONFIRM MODAL -->
   <div class="confirm-overlay" id="confirm-modal">
     <div class="confirm-box">
@@ -773,12 +238,39 @@
     </div>
   </div>
 
+  <!-- CHANGE PASSWORD MODAL -->
+  <div class="modal-overlay" id="change-pw-modal" onclick="if(event.target.id==='change-pw-modal')closePwModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>&#x1F512; Change Password</h2>
+        <button class="modal-close" onclick="closePwModal()">&#x2715;</button>
+      </div>
+      <div class="auth-error" id="pw-error" style="margin-bottom:12px"></div>
+      <div class="form-group">
+        <label for="pw-current">Current Password</label>
+        <input type="password" id="pw-current" placeholder="Enter current password"
+          onkeydown="if(event.key==='Enter')document.getElementById('pw-new').focus()" />
+      </div>
+      <div class="form-group">
+        <label for="pw-new">New Password</label>
+        <input type="password" id="pw-new" placeholder="At least 6 characters"
+          onkeydown="if(event.key==='Enter')document.getElementById('pw-confirm').focus()" />
+      </div>
+      <div class="form-group">
+        <label for="pw-confirm">Confirm New Password</label>
+        <input type="password" id="pw-confirm" placeholder="Re-enter new password"
+          onkeydown="if(event.key==='Enter')changePassword()" />
+      </div>
+      <button class="btn btn-primary" id="btn-change-pw" onclick="changePassword()">Update Password</button>
+    </div>
+  </div>
+
   <!-- LOG FAV MODAL -->
   <div class="modal-overlay" id="log-fav-modal" onclick="if(event.target.id==='log-fav-modal')this.classList.remove('open')">
     <div class="modal">
       <div class="modal-header">
-        <h2>Log Meal 📝</h2>
-        <button class="modal-close" onclick="document.getElementById('log-fav-modal').classList.remove('open')">✕</button>
+        <h2>Log Meal &#x1F4DD;</h2>
+        <button class="modal-close" onclick="document.getElementById('log-fav-modal').classList.remove('open')">&#x2715;</button>
       </div>
       <p id="log-fav-name" style="font-weight:600;margin-bottom:14px;color:var(--green)"></p>
       <div class="form-group"><label>Date</label><input type="date" id="lf-date"/></div>
@@ -791,7 +283,7 @@
           <option value="Snack">Snack</option>
         </select>
       </div>
-      <button class="btn btn-primary" style="margin-top:4px" onclick="submitLogFav()">Confirm & Log ✓</button>
+      <button class="btn btn-primary" style="margin-top:4px" onclick="submitLogFav()">Confirm &amp; Log &#x2713;</button>
     </div>
   </div>
 
@@ -830,6 +322,121 @@
   <script>
     const API = '';  // Relative URL — works on any host (local or Render)
     let _logFavData = null;
+    let _calorieGoal = 2000;  // fetched from server on load, fallback 2000
+
+    // ── Auth guard ──
+    let _token = localStorage.getItem('nc_token');   // let — updated after a silent refresh
+    if (!_token) window.location.replace('/login.html');
+
+    // Show username in chip
+    const _username = localStorage.getItem('nc_username') || 'you';
+    document.addEventListener('DOMContentLoaded', () => {
+      const chip = document.getElementById('chip-username');
+      if (chip) chip.textContent = _username;
+    });
+
+    function doLogout() {
+      localStorage.removeItem('nc_token');
+      localStorage.removeItem('nc_refresh_token');
+      localStorage.removeItem('nc_username');
+      window.location.replace('/login.html');
+    }
+
+    function closePwModal() {
+      document.getElementById('change-pw-modal').classList.remove('open');
+      // Clear all fields and errors on close
+      ['pw-current','pw-new','pw-confirm'].forEach(id => document.getElementById(id).value = '');
+      const err = document.getElementById('pw-error');
+      err.textContent = ''; err.classList.remove('show');
+    }
+
+    async function changePassword() {
+      const current = document.getElementById('pw-current').value;
+      const newPw   = document.getElementById('pw-new').value;
+      const confirm = document.getElementById('pw-confirm').value;
+      const errEl   = document.getElementById('pw-error');
+
+      // Client-side validation
+      errEl.textContent = ''; errEl.classList.remove('show');
+      if (!current || !newPw || !confirm) {
+        errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('show'); return;
+      }
+      if (newPw !== confirm) {
+        errEl.textContent = 'New passwords do not match.'; errEl.classList.add('show'); return;
+      }
+      if (newPw.length < 6) {
+        errEl.textContent = 'New password must be at least 6 characters.'; errEl.classList.add('show'); return;
+      }
+      if (newPw === current) {
+        errEl.textContent = 'New password must be different from current.'; errEl.classList.add('show'); return;
+      }
+
+      const btn = document.getElementById('btn-change-pw');
+      btn.disabled = true; btn.textContent = 'Updating...';
+
+      try {
+        const r = await authFetch(`${API}/auth/password/`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ current_password: current, new_password: newPw })
+        });
+        if (r.ok) {
+          closePwModal();
+          showToast('Password changed successfully \u2713');
+        } else {
+          const err = await r.json().catch(() => ({}));
+          errEl.textContent = err.detail || 'Failed to change password.';
+          errEl.classList.add('show');
+        }
+      } catch(e) {
+        errEl.textContent = 'Could not reach the server.'; errEl.classList.add('show');
+      }
+
+      btn.disabled = false; btn.textContent = 'Update Password';
+    }
+
+    // ── Silent token refresh ──
+    // Calls POST /auth/refresh with the stored refresh token.
+    // On success: updates _token + localStorage and returns true.
+    // On failure: returns false (caller will then logout).
+    async function tryRefresh() {
+      const refreshToken = localStorage.getItem('nc_refresh_token');
+      if (!refreshToken) return false;
+      try {
+        const r = await fetch('/auth/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh_token: refreshToken })
+        });
+        if (!r.ok) return false;
+        const data = await r.json();
+        _token = data.access_token;
+        localStorage.setItem('nc_token', data.access_token);
+        localStorage.setItem('nc_refresh_token', data.refresh_token);
+        return true;
+      } catch { return false; }
+    }
+
+    // ── Authenticated fetch wrapper ──
+    // On 401: silently tries to refresh the access token and retries.
+    // Only logs out if the refresh also fails.
+    async function authFetch(url, opts = {}) {
+      opts.headers = opts.headers || {};
+      opts.headers['Authorization'] = 'Bearer ' + _token;
+      const response = await fetch(url, opts);
+      if (response.status === 401) {
+        const refreshed = await tryRefresh();
+        if (refreshed) {
+          // Retry original request with the fresh access token
+          opts.headers['Authorization'] = 'Bearer ' + _token;
+          const retry = await fetch(url, opts);
+          if (retry.status === 401) doLogout(); // refresh token also rejected
+          return retry;
+        }
+        doLogout();
+      }
+      return response;
+    }
 
     function today() {
       const d = new Date();
@@ -861,7 +468,7 @@
       const d=today();
       document.getElementById('today-date-label').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
       try {
-        const r=await fetch(`${API}/meals/summary/${d}/`);
+        const r=await authFetch(`${API}/meals/summary/${d}/`);
         if(r.ok){
           const s=await r.json();
           const cal=s.total_calories||0,carb=s.total_carbohydrates||0,prot=s.total_proteins||0,fat=s.total_fats||0;
@@ -869,7 +476,7 @@
           document.getElementById('sum-carbs').textContent=carb+'g';
           document.getElementById('sum-prot').textContent=prot+'g';
           document.getElementById('sum-fat').textContent=fat+'g';
-          const goal=2000,pct=Math.min(cal/goal,1);
+          const goal=_calorieGoal,pct=Math.min(cal/goal,1);
           document.getElementById('cal-ring').style.strokeDashoffset=289-(289*pct);
           const total=carb+prot+fat||1;
           document.getElementById('bar-carbs').style.width=(carb/total*100)+'%';
@@ -878,7 +485,7 @@
         }
       } catch(e){}
       try {
-        const r=await fetch(`${API}/meals/${d}/`);
+        const r=await authFetch(`${API}/meals/${d}/`);
         const el=document.getElementById('today-meals-list');
         if(r.ok){
           const meals=await r.json();
@@ -904,7 +511,7 @@
       const el=document.getElementById('log-list');
       el.innerHTML='<div class="loading">Loading...</div>';
       try{
-        const [rMeals,rSummary]=await Promise.all([fetch(`${API}/meals/${d}/`),fetch(`${API}/meals/summary/${d}/`)]);
+        const [rMeals,rSummary]=await Promise.all([authFetch(`${API}/meals/${d}/`),authFetch(`${API}/meals/summary/${d}/`)]);
         let summaryHTML='';
         if(rSummary.ok){
           const s=await rSummary.json();
@@ -925,12 +532,12 @@
                 <div style="text-align:right;font-size:13px;color:var(--muted)"><strong style="font-size:18px;color:#fff">${m.calories}</strong><br>kcal</div>
               </div>
               <div style="display:flex;gap:16px;margin-top:10px;font-size:13px;color:var(--muted)">
-                <span>🌾 ${m.carbohydrates}g</span><span>💪 ${m.proteins}g</span><span>🧈 ${m.fats}g</span>
+                <span>&#x1F33E; ${m.carbohydrates}g</span><span>&#x1F4AA; ${m.proteins}g</span><span>&#x1F9C8; ${m.fats}g</span>
               </div>
               <div class="meal-actions">
-                <button class="btn-edit" onclick='openEdit(${JSON.stringify(m)})'>✏️ Edit</button>
-                <button class="btn-fav" onclick="addFav(${m.id})">⭐ Fav</button>
-                <button class="btn-del" onclick="deleteMeal(${m.id})">🗑 Del</button>
+                <button class="btn-edit" onclick='openEdit(${JSON.stringify(m)})'>&#x270F;&#xFE0F; Edit</button>
+                <button class="btn-fav" onclick="addFav(${m.id})">&#x2B50; Fav</button>
+                <button class="btn-del" onclick="deleteMeal(${m.id})">&#x1F5D1; Del</button>
               </div>
             </div>`).join('');
         } else el.innerHTML='<div class="empty">No meals on this date</div>';
@@ -938,14 +545,14 @@
     }
     async function deleteMeal(id){
       showConfirm('This meal will be permanently removed.',async()=>{
-        const r=await fetch(`${API}/meals/${id}/`,{method:'DELETE'});
+        const r=await authFetch(`${API}/meals/${id}/`,{method:'DELETE'});
         if(r.ok){showToast('Meal deleted');loadLog();loadToday();}
         else showToast('Failed to delete','error');
       });
     }
     async function addFav(id){
-      const r=await fetch(`${API}/meals/fav/?meal_id=${id}`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
-      if(r.ok)showToast('Added to favorites ⭐');
+      const r=await authFetch(`${API}/meals/fav/?meal_id=${id}`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+      if(r.ok)showToast('Added to favorites \u2B50');
       else showToast('Could not add favorite','error');
     }
 
@@ -969,24 +576,24 @@
       const btn=document.getElementById('btn-analyse-edit');
       btn.disabled=true; btn.textContent='Analysing...';
       try{
-        const r=await fetch(`${API}/meals/analyse/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meal_details:details})});
+        const r=await authFetch(`${API}/meals/analyse/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meal_details:details})});
         if(r.ok){
           const n=await r.json();
           document.getElementById('e-cal').value=n.calories||0;
           document.getElementById('e-carb').value=n.carbohydrates||0;
           document.getElementById('e-prot').value=n.proteins||0;
           document.getElementById('e-fat').value=n.fats||0;
-          showToast('Nutrition updated ✨');
+          showToast('Nutrition updated \u2728');
         } else showToast('Analysis failed','error');
       }catch(e){showToast('Backend offline','error');}
-      finally{btn.disabled=false;btn.textContent='✨ Analyse';}
+      finally{btn.disabled=false;btn.textContent='\u2728 Analyse';}
     }
     async function saveEdit(){
       const id=document.getElementById('e-id').value;
       const body={date:document.getElementById('e-date').value,meal_type:document.getElementById('e-type').value,meal_details:document.getElementById('e-details').value,calories:parseInt(document.getElementById('e-cal').value)||0,carbohydrates:parseInt(document.getElementById('e-carb').value)||0,proteins:parseInt(document.getElementById('e-prot').value)||0,fats:parseInt(document.getElementById('e-fat').value)||0};
       try{
-        const r=await fetch(`${API}/meals/${id}/`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-        if(r.ok){showToast('Meal updated ✓');closeEditBtn();loadLog();loadToday();}
+        const r=await authFetch(`${API}/meals/${id}/`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        if(r.ok){showToast('Meal updated \u2713');closeEditBtn();loadLog();loadToday();}
         else showToast('Update failed','error');
       }catch(e){showToast('Backend offline','error');}
     }
@@ -1004,10 +611,9 @@
       const btn=document.getElementById('btn-analyse-meal');
       btn.disabled=true; btn.textContent='Analysing...';
       try{
-        const r=await fetch(`${API}/meals/analyse/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meal_details:details})});
+        const r=await authFetch(`${API}/meals/analyse/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meal_details:details})});
         if(r.ok){
           const n=await r.json();
-          // copy date/type/details to phase 2
           document.getElementById('f-date2').value=document.getElementById('f-date').value;
           document.getElementById('f-type2').value=document.getElementById('f-type').value;
           document.getElementById('f-details2').value=details;
@@ -1019,14 +625,14 @@
           document.getElementById('add-p2').classList.add('visible');
         } else showToast('Analysis failed','error');
       } catch(e){showToast('Backend offline','error');}
-      finally{btn.disabled=false;btn.textContent='✨ Analyse Meal';}
+      finally{btn.disabled=false;btn.textContent='\u2728 Analyse Meal';}
     }
     async function submitMeal(){
       const body={date:document.getElementById('f-date2').value,meal_type:document.getElementById('f-type2').value,meal_details:document.getElementById('f-details2').value,calories:parseInt(document.getElementById('f-cal').value)||0,carbohydrates:parseInt(document.getElementById('f-carb').value)||0,proteins:parseInt(document.getElementById('f-prot').value)||0,fats:parseInt(document.getElementById('f-fat').value)||0};
       if(!body.date||!body.meal_details){showToast('Missing details','error');return;}
       try{
-        const r=await fetch(`${API}/meals/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-        if(r.ok){showToast('Meal logged! ✓');resetAddPhase();loadToday();}
+        const r=await authFetch(`${API}/meals/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        if(r.ok){showToast('Meal logged! \u2713');resetAddPhase();loadToday();}
         else showToast('Failed to log meal','error');
       }catch(e){showToast('Backend offline','error');}
     }
@@ -1037,13 +643,13 @@
       const el=document.getElementById('fav-picker-list');
       el.innerHTML='<div class="loading">Loading...</div>';
       try{
-        const r=await fetch(`${API}/meals/fav`);
+        const r=await authFetch(`${API}/meals/fav/`);
         if(r.ok){
           const favs=await r.json();
           if(!favs.length){el.innerHTML='<div class="empty">No favorites saved yet</div>';return;}
           el.innerHTML=favs.map(f=>`
             <div class="fav-pick-item" onclick='fillFromFav(${JSON.stringify(f)})'>
-              <div><div class="pick-name">${f.meal_details}</div><div class="pick-macros">🌾 ${f.carbohydrates}g &nbsp;💪 ${f.proteins}g &nbsp;🧈 ${f.fats}g</div></div>
+              <div><div class="pick-name">${f.meal_details}</div><div class="pick-macros">&#x1F33E; ${f.carbohydrates}g &nbsp;&#x1F4AA; ${f.proteins}g &nbsp;&#x1F9C8; ${f.fats}g</div></div>
               <div style="text-align:right;font-size:13px"><strong style="font-size:17px;color:var(--green)">${f.calories}</strong><br><span style="color:var(--muted)">kcal</span></div>
             </div>`).join('');
         } else el.innerHTML='<div class="empty">No favorites yet</div>';
@@ -1051,7 +657,6 @@
     }
     function closeFavPicker(e){if(e.target.id==='fav-picker')document.getElementById('fav-picker').classList.remove('open');}
     function fillFromFav(f){
-      // skip phase 1, go straight to phase 2
       document.getElementById('f-details').value=f.meal_details;
       document.getElementById('f-date2').value=document.getElementById('f-date').value||today();
       document.getElementById('f-type2').value=document.getElementById('f-type').value;
@@ -1063,7 +668,7 @@
       document.getElementById('add-p1').style.display='none';
       document.getElementById('add-p2').classList.add('visible');
       document.getElementById('fav-picker').classList.remove('open');
-      showToast('Filled from favorite ⭐ — edit values if needed');
+      showToast('Filled from favorite \u2B50 \u2014 edit values if needed');
     }
 
     // ---- FAVS ----
@@ -1071,24 +676,24 @@
       const el=document.getElementById('fav-list');
       el.innerHTML='<div class="loading">Loading...</div>';
       try{
-        const r=await fetch(`${API}/meals/fav`);
+        const r=await authFetch(`${API}/meals/fav/`);
         if(r.ok){
           const favs=await r.json();
           el.innerHTML=favs.map(f=>`
             <div class="fav-card">
               <div class="fav-header">
                 <div style="font-weight:600">${f.meal_details}</div>
-                <button class="del-btn" onclick="deleteFav(${f.id})">✕</button>
+                <button class="del-btn" onclick="deleteFav(${f.id})">&#x2715;</button>
               </div>
               <div class="fav-stats">
-                <span>🔥 <strong>${f.calories}</strong> kcal</span>
-                <span>🌾 <strong>${f.carbohydrates}g</strong></span>
-                <span>💪 <strong>${f.proteins}g</strong></span>
-                <span>🧈 <strong>${f.fats}g</strong></span>
+                <span>&#x1F525; <strong>${f.calories}</strong> kcal</span>
+                <span>&#x1F33E; <strong>${f.carbohydrates}g</strong></span>
+                <span>&#x1F4AA; <strong>${f.proteins}g</strong></span>
+                <span>&#x1F9C8; <strong>${f.fats}g</strong></span>
               </div>
               <div class="meal-actions" style="margin-top:10px">
-                <button class="btn-log" onclick='openLogFav(${JSON.stringify(f)})'>📝 Log</button>
-                <button class="btn-del" onclick="deleteFav(${f.id})">🗑 Remove</button>
+                <button class="btn-log" onclick='openLogFav(${JSON.stringify(f)})'>&#x1F4DD; Log</button>
+                <button class="btn-del" onclick="deleteFav(${f.id})">&#x1F5D1; Remove</button>
               </div>
             </div>`).join('');
         } else el.innerHTML='<div class="empty">No favorites yet<br><small>Star a meal from the Log tab</small></div>';
@@ -1104,14 +709,14 @@
       if(!_logFavData)return;
       const body={date:document.getElementById('lf-date').value,meal_type:document.getElementById('lf-type').value,meal_details:_logFavData.meal_details,calories:_logFavData.calories,carbohydrates:_logFavData.carbohydrates,proteins:_logFavData.proteins,fats:_logFavData.fats};
       try{
-        const r=await fetch(`${API}/meals/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-        if(r.ok){showToast('Meal logged! ✓');document.getElementById('log-fav-modal').classList.remove('open');loadToday();}
+        const r=await authFetch(`${API}/meals/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        if(r.ok){showToast('Meal logged! \u2713');document.getElementById('log-fav-modal').classList.remove('open');loadToday();}
         else showToast('Failed to log','error');
       }catch(e){showToast('Backend offline','error');}
     }
     async function deleteFav(id){
       showConfirm('Remove this favorite?',async()=>{
-        const r=await fetch(`${API}/meals/fav/${id}/`,{method:'DELETE'});
+        const r=await authFetch(`${API}/meals/fav/${id}/`,{method:'DELETE'});
         if(r.ok){showToast('Removed from favorites');loadFavs();}
         else showToast('Failed to remove','error');
       });
@@ -1130,7 +735,7 @@
       if(!details){showToast('Enter meal details first','error');return;}
       const btn=event.target; btn.disabled=true; btn.textContent='Analysing...';
       try{
-        const r=await fetch(`${API}/meals/analyse/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meal_details:details})});
+        const r=await authFetch(`${API}/meals/analyse/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meal_details:details})});
         if(r.ok){
           const n=await r.json();
           document.getElementById('af-details2').value=details;
@@ -1142,21 +747,69 @@
           document.getElementById('af-p2').classList.add('visible');
         } else showToast('Analysis failed','error');
       }catch(e){showToast('Backend offline','error');}
-      finally{btn.disabled=false;btn.textContent='✨ Analyse';}
+      finally{btn.disabled=false;btn.textContent='\u2728 Analyse';}
     }
     async function submitAddFav(){
       const body={meal_details:document.getElementById('af-details2').value,calories:parseInt(document.getElementById('af-cal').value)||0,carbohydrates:parseInt(document.getElementById('af-carb').value)||0,proteins:parseInt(document.getElementById('af-prot').value)||0,fats:parseInt(document.getElementById('af-fat').value)||0};
       if(!body.meal_details){showToast('Missing meal details','error');return;}
       try{
-        const r=await fetch(`${API}/meals/single_fav/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-        if(r.ok){showToast('Favorite saved ⭐');document.getElementById('add-fav-modal').classList.remove('open');loadFavs();}
+        const r=await authFetch(`${API}/meals/single_fav/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        if(r.ok){showToast('Favorite saved \u2B50');document.getElementById('add-fav-modal').classList.remove('open');loadFavs();}
         else showToast('Failed to save','error');
       }catch(e){showToast('Backend offline','error');}
     }
 
-    document.getElementById('f-date').value=today();
-    loadToday();
+    // ---- USER PROFILE ----
+    async function loadUserProfile() {
+      try {
+        const r = await authFetch(`${API}/user/`);
+        if (r.ok) {
+          const profile = await r.json();
+          _calorieGoal = profile.target_calorie || 2000;
+          document.getElementById('goal-display').textContent = _calorieGoal;
+        }
+      } catch(e) {}
+    }
 
+    function openGoalEdit() {
+      document.getElementById('goal-input').value = _calorieGoal;
+      document.getElementById('goal-view').style.display = 'none';
+      document.getElementById('goal-edit').style.display = 'flex';
+      document.getElementById('goal-input').focus();
+    }
+
+    function closeGoalEdit() {
+      document.getElementById('goal-view').style.display = 'flex';
+      document.getElementById('goal-edit').style.display = 'none';
+    }
+
+    function saveGoalEdit() {
+      const val = parseInt(document.getElementById('goal-input').value);
+      if (isNaN(val) || val < 500 || val > 9999) {
+        showToast('Enter a number between 500 and 9999', 'error');
+        return;
+      }
+      closeGoalEdit();
+      updateGoal(val);
+    }
+
+    async function updateGoal(calories) {
+      try {
+        const r = await authFetch(`${API}/user/calorie_target/?calories=${calories}`, { method: 'PUT' });
+        if (r.ok) {
+          _calorieGoal = calories;
+          document.getElementById('goal-display').textContent = calories;
+          showToast(`Goal updated to ${calories} kcal \u2713`);
+          loadToday();  // refresh ring with new goal
+        } else {
+          showToast('Failed to update goal', 'error');
+        }
+      } catch(e) { showToast('Backend offline', 'error'); }
+    }
+
+    document.getElementById('f-date').value=today();
+    loadUserProfile();
+    loadToday();
 
   </script>
 
